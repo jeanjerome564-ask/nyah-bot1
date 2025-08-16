@@ -1,7 +1,10 @@
 services:
-  - type: web
-    name: my-flask-app
+  - type: worker
+    name: trading-bot
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: python worker.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
