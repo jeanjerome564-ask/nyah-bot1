@@ -1,9 +1,4 @@
-robin-stocks==3.0.6
+alpaca-trade-api==3.1.1
 pandas==2.2.2
 numpy==2.1.0
-requests==2.32.3
 flask==3.0.3
-gunicorn==22.0.0
-python-dotenv==1.0.1
-alpaca-trade-api==3.1.1
-worker: python worker.py
