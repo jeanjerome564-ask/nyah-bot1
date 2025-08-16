@@ -1,4 +1,4 @@
-robin-stocks==2.1.0
+robin-stocks==3.0.6
 pandas==2.2.2
 numpy==1.26.4
 requests==2.32.3
