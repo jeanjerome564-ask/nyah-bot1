@@ -1,42 +1,46 @@
 import time
 import os
-import robin_stocks.robinhood as r
+import alpaca_trade_api as tradeapi
 
 print("Trading bot starting...")
 
-# Get credentials from Render environment
-USERNAME = os.getenv("ROBINHOOD_USERNAME")
-PASSWORD = os.getenv("ROBINHOOD_PASSWORD")
+API_KEY = os.getenv("API_KEY")
+API_SECRET = os.getenv("API_SECRET")
+BASE_URL = "https://paper-api.alpaca.markets"  # Paper trading URL
 
-if not USERNAME or not PASSWORD:
-    print("⚠️ Missing Robinhood credentials! Please set ROBINHOOD_USERNAME and ROBINHOOD_PASSWORD in Render Environment.")
+if not API_KEY or not API_SECRET:
+    print("⚠️ Missing API credentials! Please set API_KEY and API_SECRET in Render Environment.")
     exit(1)
 
-# Login to Robinhood
-try:
-    r.login(USERNAME, PASSWORD)
-    print("✅ Logged into Robinhood successfully.")
-except Exception as e:
-    print(f"❌ Login failed: {e}")
-    exit(1)
+# Initialize Alpaca API
+api = tradeapi.REST(API_KEY, API_SECRET, BASE_URL, api_version='v2')
 
 # Example trading loop
 while True:
     try:
-        print("Checking markets...")
+        # Get account info
+        account = api.get_account()
+        print(f"Account equity: {account.equity}")
 
         # Example: check AAPL price
-        stock_data = r.stocks.get_latest_price("AAPL")
-        price = float(stock_data[0])
-        print(f"AAPL price: {price}")
+        barset = api.get_bars("AAPL", "1Min", limit=1)
+        price = barset[-1].c
 
-        # Example rule: Buy if price < 150
-        if price < 150:
-            print("📈 Placing BUY order for AAPL...")
-            r.orders.order_buy_market("AAPL", 1)
+        print(f"AAPL Price: {price}")
 
-        time.sleep(60)  # wait before checking again
+        # Example buy rule
+        if float(price) < 150:  
+            print("Buying 1 share of AAPL...")
+            api.submit_order(
+                symbol="AAPL",
+                qty=1,
+                side="buy",
+                type="market",
+                time_in_force="gtc"
+            )
+
+        time.sleep(60)  # wait 1 min before checking again
 
     except Exception as e:
         print(f"Error in trading loop: {e}")
-        time.sleep(120)
+        time.sleep(60)
