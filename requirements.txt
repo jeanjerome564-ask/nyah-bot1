@@ -1,4 +1,7 @@
-gunicorn
-flask
-python-dotenv
-robin-stocks
+robin-stocks==2.1.0
+pandas==2.2.2
+numpy==1.26.4
+requests==2.32.3
+flask==3.0.3
+gunicorn==22.0.0
+python-dotenv==1.0.1
